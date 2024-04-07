@@ -63,11 +63,13 @@ namespace Platformer.Mechanics
                 if (Input.GetButtonDown("Jump"))
                 {
                     if (jumpState == JumpState.Grounded)
-                        jumpState = JumpState.PrepareToJump;
-                    if (jumpState == JumpState.InFlight)
                     {
-                        --doubleJumpAmount;
                         jumpState = JumpState.PrepareToJump;
+                    }                        
+                    else if (jumpState == JumpState.InFlight)
+                    {                        
+                        --doubleJumpAmount;
+                        jumpState = JumpState.PrepareToJump;                        
                     }
                 }
                 else if (Input.GetButtonUp("Jump"))
@@ -124,7 +126,7 @@ namespace Platformer.Mechanics
             }
             else if (jump && doubleJumpAmount > 0)
             {                
-                velocity.y = jumpTakeOffSpeed;
+                velocity.y = jumpTakeOffSpeed * model.jumpModifier;
                 jump = false;
             }
             else if (stopJump)

@@ -167,11 +167,14 @@ namespace Platformer.Mechanics
                     if (IsGrounded)
                     {
                         //how much of our velocity aligns with surface normal?
-                        var projection = Vector2.Dot(velocity, currentNormal);
+                        var projection = Vector2.Dot(velocity.normalized, currentNormal.normalized);
                         if (projection < 0)
                         {
-                            //slower velocity if moving against the normal (up a hill).
-                            velocity = velocity - projection * currentNormal;
+                            //climb the vertical surface with limited velocity
+                            var coef = Mathf.Min(Mathf.Abs(velocity.x), 2F);
+
+                            //slower velocity if moving against the normal (up a hill).                            
+                            velocity = velocity - coef * projection * currentNormal;                            
                         }
                     }
                     else
@@ -179,10 +182,10 @@ namespace Platformer.Mechanics
 
                         //We are airborne, but hit something, so cancel vertical up and horizontal velocity.
                         velocity.x *= 0;
-
+                        
                         //Don't cancel vertical up when hitting vertical wall.
-                        if (Mathf.Abs(currentNormal.y) > 1e-6F)
-                        {
+                        if (Mathf.Abs(currentNormal.y) > 1e-1F)
+                        {                            
                             velocity.y = Mathf.Min(velocity.y, 0);
                         }
                     }
